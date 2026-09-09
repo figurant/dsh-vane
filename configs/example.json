@@ -1,0 +1,20 @@
+{
+  "pythonExecutable": "/absolute/path/dsh-vane/.venv/bin/python",
+  "runtimeModule": "dsh_vane_runtime",
+  "workspaceRoot": "/absolute/path/dsh-vane-workspaces",
+  "allowedFileRoots": ["/absolute/path/input-files"],
+  "artifactStores": [
+    {"alias": "shared", "root": "/absolute/path/shared-vane-artifacts", "scope": "replace-with-producer-scope"}
+  ],
+  "weknoraSources": [
+    {"alias": "knowledge", "baseURL": "http://127.0.0.1:8080", "apiKeyEnv": "WEKNORA_API_KEY", "knowledgeBaseIds": ["replace-with-test-knowledge-base-id"]}
+  ],
+  "databases": [
+    {"alias": "warehouse", "kind": "postgresql", "dsnEnv": "DSH_VANE_POSTGRES_DSN"}
+  ],
+  "models": [
+    {"alias": "local-vision", "baseURL": "http://127.0.0.1:8001/v1", "model": "Qwen2.5-VL-3B-Instruct", "temperature": 0, "maxTokens": 2048}
+  ],
+  "hostVersion": "0.1.2-rc.1",
+  "limits": {"maxWorkspaces": 4, "maxRows": 100000, "operationTimeoutMs": 120000, "idleMs": 1800000}
+}

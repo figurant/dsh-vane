@@ -1,0 +1,8 @@
+- insert:
+    - id: vane
+      name: dsh-vane
+      config:
+        pythonExecutable: !!js process.env.DSH_VANE_PYTHON
+        workspaceRoot: !!js process.env.DSH_VANE_WORKSPACES
+        allowedFileRoots: !!js >-
+          process.env.DSH_VANE_FILE_ROOTS?.split(process.platform === 'win32' ? ';' : ':').filter(Boolean)

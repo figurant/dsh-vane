@@ -1,0 +1,31 @@
+schema_version: vane-package/v1
+id: document_observations
+version: 1.0.0
+files:
+  - udfs/parse.py
+  - sql/01_parse.sql
+  - sql/02_extract.sql
+  - sql/03_publish.sql
+  - schemas/ingest.json
+  - prompts/extract.md
+  - requirements.lock
+udfs:
+  - name: parse_asset
+    entry: udfs.parse:parse_asset
+    parameters: [VARCHAR, VARCHAR]
+    return_type: VARCHAR
+  - name: extract_observations
+    entry: udfs.parse:extract_observations
+    parameters: [VARCHAR, VARCHAR]
+    return_type: VARCHAR
+pipelines:
+  ingest:
+    parameters_schema: schemas/ingest.json
+    steps:
+      - sql/01_parse.sql
+      - sql/02_extract.sql
+      - sql/03_publish.sql
+    outputs:
+      documents: documents
+      evidence: evidence
+      facts: facts

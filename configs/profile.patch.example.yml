@@ -1,0 +1,17 @@
+# Merge this row into your profile's patch list, preserving all other rows.
+- id: vane
+  config:
+    pythonExecutable: /absolute/path/dsh-vane/.venv/bin/python
+    workspaceRoot: /absolute/path/dsh-vane-workspaces
+    allowedFileRoots:
+      - /absolute/path/input-files
+    # Omit enabledPackages to use the bundled document_observations package pin.
+    weknoraSources:
+      - alias: knowledge
+        baseURL: http://127.0.0.1:8080
+        apiKeyEnv: WEKNORA_API_KEY
+        knowledgeBaseIds: [replace-with-test-kb-id]
+    artifactStores:
+      - alias: shared
+        root: /absolute/path/shared-vane-artifacts
+        scope: replace-with-producer-scope

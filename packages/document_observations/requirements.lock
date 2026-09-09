@@ -1,0 +1,6 @@
+# Installed at host setup from the project's uv.lock; never installed at execution time.
+# Shared package requires these distributions in either thin host.
+PyMuPDF>=1.25,<2
+Pillow>=11,<13
+httpx[socks]>=0.28,<1
+jsonschema>=4.23,<5

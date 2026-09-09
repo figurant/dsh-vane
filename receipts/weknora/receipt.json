@@ -1,0 +1,12 @@
+{
+  "kind": "live-weknora-read",
+  "started_at": "2026-09-09T13:59:05.296Z",
+  "status": "blocked",
+  "missing_environment_variables": [
+    "DSH_VANE_TEST_WEKNORA_URL",
+    "DSH_VANE_TEST_WEKNORA_KEY",
+    "DSH_VANE_TEST_WEKNORA_KB",
+    "DSH_VANE_TEST_WEKNORA_KNOWLEDGE"
+  ],
+  "finished_at": "2026-09-09T13:59:05.296Z"
+}

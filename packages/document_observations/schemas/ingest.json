@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "properties": {
+    "multiplier": {"type": "number", "description": "Explicit value scaling, default 1."},
+    "model_alias": {"type": "string", "description": "Configured extraction/vision model; required for images and scanned PDFs."},
+    "prompt": {"type": "string", "description": "Task-specific extraction instructions."},
+    "response_schema": {"type": "object", "description": "Optional JSON Schema for the extraction response; response must still contain observations."}
+  }
+}

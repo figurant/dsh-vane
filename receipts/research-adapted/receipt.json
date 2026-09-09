@@ -1,0 +1,21 @@
+{
+  "kind": "real-model-research",
+  "model": "Qwen2.5-VL-3B-Instruct",
+  "baseURL": "http://127.0.0.1:8001/v1",
+  "started_at": "2026-09-09T13:49:02.096Z",
+  "status": "incomplete",
+  "criteria": {
+    "model_participated": true,
+    "tools_called": 0,
+    "loaded_files": [],
+    "sql_executed": false,
+    "pipeline_executed": false,
+    "workspace_ids": [],
+    "followup_same_workspace": false,
+    "final_messages": 2,
+    "manual_review_required": true
+  },
+  "agent_id": "vane-research-8fff25c8-40db-48b9-9d2f-5ed62c4af63a",
+  "reason": "Model returned proposed tool calls as prose without executing tools; autonomous analysis did not pass.",
+  "finished_at": "2026-09-09T13:49:31.916Z"
+}

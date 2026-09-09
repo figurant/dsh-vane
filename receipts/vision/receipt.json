@@ -1,0 +1,169 @@
+{
+  "kind": "real-vision-extraction",
+  "autonomous_research": false,
+  "result": {
+    "tables": [
+      {
+        "name": "run_45f929f65de54e488aa7873c5352067d.documents",
+        "schema": [
+          {
+            "name": "document_key",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "title",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "markdown",
+            "type": "VARCHAR"
+          }
+        ],
+        "row_count": 1,
+        "preview": [
+          {
+            "document_key": "c512615a-9023-4fba-93a8-a855fa79db6d",
+            "title": "new-report.png",
+            "markdown": "Image registered; a configured vision model is required to read its content."
+          }
+        ],
+        "provenance": {
+          "kind": "pipeline",
+          "package_id": "document_observations",
+          "package_digest": "65a873803fc5fb3c5b74e1b6a38f2df1727e5b8bb2c744e1861a49b8e815bb94",
+          "asset_ids": [
+            "c512615a-9023-4fba-93a8-a855fa79db6d"
+          ],
+          "recipe_hash": "840fdde9eef27bb75ec1410561c3519c15b474e3f344ee04a7b0abde809440a7"
+        },
+        "result_id": "6df8fa33-a0ce-461c-960b-bac86b719481",
+        "content_digest": "ed55844e1bbf58903f99786114fa9be239bcce6b2d0966ebdadccf20dcb064a1"
+      },
+      {
+        "name": "run_45f929f65de54e488aa7873c5352067d.evidence",
+        "schema": [
+          {
+            "name": "evidence_id",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "asset_id",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "locator_json",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "quote",
+            "type": "VARCHAR"
+          }
+        ],
+        "row_count": 2,
+        "preview": [
+          {
+            "evidence_id": "c512615a-9023-4fba-93a8-a855fa79db6d:1",
+            "asset_id": "c512615a-9023-4fba-93a8-a855fa79db6d",
+            "locator_json": "{}",
+            "quote": "Units and reporting dates not provided."
+          },
+          {
+            "evidence_id": "c512615a-9023-4fba-93a8-a855fa79db6d:2",
+            "asset_id": "c512615a-9023-4fba-93a8-a855fa79db6d",
+            "locator_json": "{}",
+            "quote": "Units and reporting dates not provided."
+          }
+        ],
+        "provenance": {
+          "kind": "pipeline",
+          "package_id": "document_observations",
+          "package_digest": "65a873803fc5fb3c5b74e1b6a38f2df1727e5b8bb2c744e1861a49b8e815bb94",
+          "asset_ids": [
+            "c512615a-9023-4fba-93a8-a855fa79db6d"
+          ],
+          "recipe_hash": "840fdde9eef27bb75ec1410561c3519c15b474e3f344ee04a7b0abde809440a7"
+        },
+        "result_id": "0adce011-475f-4872-b59a-42f0bef57a8d",
+        "content_digest": "00de03e894aaf7523893c946f2cc0b553f2517770cd5d6b7ee4fe6af91fda0d7"
+      },
+      {
+        "name": "run_45f929f65de54e488aa7873c5352067d.facts",
+        "schema": [
+          {
+            "name": "item",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "value",
+            "type": "DOUBLE"
+          },
+          {
+            "name": "category",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "evidence_id",
+            "type": "VARCHAR"
+          },
+          {
+            "name": "asset_id",
+            "type": "VARCHAR"
+          }
+        ],
+        "row_count": 2,
+        "preview": [
+          {
+            "item": "A",
+            "value": 15.0,
+            "category": null,
+            "evidence_id": "c512615a-9023-4fba-93a8-a855fa79db6d:1",
+            "asset_id": "c512615a-9023-4fba-93a8-a855fa79db6d"
+          },
+          {
+            "item": "B",
+            "value": 25.0,
+            "category": null,
+            "evidence_id": "c512615a-9023-4fba-93a8-a855fa79db6d:2",
+            "asset_id": "c512615a-9023-4fba-93a8-a855fa79db6d"
+          }
+        ],
+        "provenance": {
+          "kind": "pipeline",
+          "package_id": "document_observations",
+          "package_digest": "65a873803fc5fb3c5b74e1b6a38f2df1727e5b8bb2c744e1861a49b8e815bb94",
+          "asset_ids": [
+            "c512615a-9023-4fba-93a8-a855fa79db6d"
+          ],
+          "recipe_hash": "840fdde9eef27bb75ec1410561c3519c15b474e3f344ee04a7b0abde809440a7"
+        },
+        "result_id": "b38d676f-ef2a-474b-a066-ca509df9364a",
+        "content_digest": "79ec42944410cf6304c72300b424988020cd75827d65cc9ab0979f68f981a3ce"
+      }
+    ],
+    "schema": "run_45f929f65de54e488aa7873c5352067d",
+    "recipe_hash": "840fdde9eef27bb75ec1410561c3519c15b474e3f344ee04a7b0abde809440a7",
+    "warnings": [
+      "Model output is not guaranteed bitwise reproducible; model identity, sampling and prompt/schema are recorded in the recipe."
+    ],
+    "reused": false,
+    "execution_result_id": "8994fe39-fdc3-497e-92ed-ae7315f733f9",
+    "artifacts": [
+      {
+        "artifact_id": "2afdde68-90c2-40b3-8c87-3674bbe3ec1b",
+        "manifest": "/home/zhuwei/dsh-vane/receipts/vision/workspaces/49b4d332-4baa-464e-808f-0fa9695145d6/artifacts/2afdde68-90c2-40b3-8c87-3674bbe3ec1b/manifest.json",
+        "recipe_hash": "840fdde9eef27bb75ec1410561c3519c15b474e3f344ee04a7b0abde809440a7"
+      }
+    ]
+  },
+  "expected_observations": [
+    {
+      "item": "A",
+      "value": 15
+    },
+    {
+      "item": "B",
+      "value": 25
+    }
+  ],
+  "status": "passed"
+}

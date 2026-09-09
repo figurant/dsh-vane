@@ -1,0 +1,22 @@
+{
+  "kind": "real-model-research",
+  "model": "Qwen2.5-VL-3B-Instruct",
+  "baseURL": "http://127.0.0.1:8001/v1",
+  "started_at": "2026-09-09T13:28:22.823Z",
+  "status": "incomplete",
+  "criteria": {
+    "model_participated": true,
+    "tools_called": 0,
+    "loaded_files": [],
+    "sql_executed": false,
+    "pipeline_executed": false,
+    "workspace_ids": [],
+    "followup_same_workspace": false,
+    "complete_conclusions": 0,
+    "manual_review_required": true,
+    "final_messages": 2
+  },
+  "agent_id": "vane-research-5e821291-cbea-4825-b5b7-40102df2f25c",
+  "finished_at": "2026-09-09T13:29:54.645Z",
+  "reason": "模型把计划中的工具调用写成普通文本，使用占位符，未执行任何工具；第二轮出现重复SQL。自由分析验收未通过。"
+}

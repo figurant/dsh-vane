@@ -1,0 +1,35 @@
+[
+  {
+    "title": "c512615a-9023-4fba-93a8-a855fa79db6d",
+    "markdown": "Image registered; a configured vision model is required to read its content.",
+    "evidence": [
+      {
+        "key": "1",
+        "locator": {},
+        "quote": "Units and reporting dates not provided."
+      },
+      {
+        "key": "2",
+        "locator": {},
+        "quote": "Units and reporting dates not provided."
+      }
+    ],
+    "observations": [
+      {
+        "item": "A",
+        "value": 15.0,
+        "category": null,
+        "key": "1"
+      },
+      {
+        "item": "B",
+        "value": 25.0,
+        "category": null,
+        "key": "2"
+      }
+    ],
+    "media_type": "image/png",
+    "path": "/home/zhuwei/dsh-vane/receipts/vision/workspaces/49b4d332-4baa-464e-808f-0fa9695145d6/inputs/c512615a-9023-4fba-93a8-a855fa79db6d.png",
+    "model_response": "```json\n{\n  \"observations\": [\n    {\n      \"item\": \"A\",\n      \"value\": 15,\n      \"category\": null,\n      \"quote\": \"Units and reporting dates not provided.\",\n      \"page\": 1\n    },\n    {\n      \"item\": \"B\",\n      \"value\": 25,\n      \"category\": null,\n      \"quote\": \"Units and reporting dates not provided.\",\n      \"page\": 1\n    }\n  ]\n}\n```"
+  }
+]

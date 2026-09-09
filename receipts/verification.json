@@ -1,0 +1,139 @@
+{
+  "kind": "dsh-vane-delivery-verification",
+  "status": "implemented_with_explicit_acceptance_gaps",
+  "verified_at": "2026-09-09T14:13:31.869580+00:00",
+  "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "releases": [
+    {
+      "path": "releases/dsh-vane-0.1.0.tgz",
+      "bytes": 107960,
+      "sha256": "4d01ea3bb6f70671c4c15923c593bc1f5e4aaf1a9dc5198e0081facf8cf10184"
+    },
+    {
+      "path": "releases/dsh_vane_runtime-0.1.0-py3-none-any.whl",
+      "bytes": 57397,
+      "sha256": "ece7fc184836bed9e32d24e088e39a74fbe413f02b2580567ea4eef057e03c4f"
+    }
+  ],
+  "host_tested_tarball_sha256": "4d01ea3bb6f70671c4c15923c593bc1f5e4aaf1a9dc5198e0081facf8cf10184",
+  "host_tested_release_identical": true,
+  "host_receipt": "receipts/host/receipt.json",
+  "package_digest": "65a873803fc5fb3c5b74e1b6a38f2df1727e5b8bb2c744e1861a49b8e815bb94",
+  "versions": {
+    "node": "v24.16.0",
+    "python": "3.11.15",
+    "vane": "0.1.0",
+    "dsh": "0.1.2-rc.1",
+    "dsh_source_head": "49a606bc5b5934603f22a26957a07dc799ab0291"
+  },
+  "checks": {
+    "node": {
+      "command": "npm test",
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "python": {
+      "command": "uv run pytest -q",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 1,
+      "skip_reason": "DSH_VANE_TEST_PG_DSN is not configured"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "status": "passed"
+    },
+    "interop": {
+      "command": "npm run test:interop",
+      "status": "passed",
+      "receipt": "tests/fixtures/golden/receipt.json"
+    },
+    "python_lock": {
+      "command": "uv sync --locked",
+      "status": "passed"
+    },
+    "npm_pack_dry_run": {
+      "status": "passed",
+      "file_count": 60,
+      "size": 107960,
+      "unpacked_size": 304619,
+      "required_files_verified": [
+        "dist/index.js",
+        "dist/index.d.ts",
+        "cordis.patch.yml",
+        "prompts/data-agent.md",
+        "skills/data-analysis/SKILL.md",
+        "python/dsh_vane_runtime/runtime.py",
+        "contracts/artifact-v1.schema.json",
+        "packages/document_observations/package.yaml",
+        "uv.lock",
+        "pyproject.toml"
+      ],
+      "no_python_bytecode": true
+    },
+    "npm_release": {
+      "filename": "dsh-vane-0.1.0.tgz",
+      "size": 107960,
+      "unpacked_size": 304619,
+      "shasum": "f7fcd39744d7613b469830e3ce548dafde5e3fdf",
+      "integrity": "sha512-JzzobJdTHSAAvJP1mUh0LCSmqrYcIRi85zo35ja+TllxfrlPTpSovNM7wyoGVJ1e0qv0ivInXmcGtgIA8Di0Hw==",
+      "file_count": 60
+    },
+    "wheel": {
+      "command": "uv run --isolated --no-project --with ./releases/dsh_vane_runtime-0.1.0-py3-none-any.whl python scripts/verify-wheel.py",
+      "status": "passed",
+      "wheel_runtime_version": "0.1.0",
+      "editable_source_imported": false,
+      "schemas_and_lock_bundled": true,
+      "real_vane": 42
+    },
+    "actual_dsh_host": {
+      "status": "passed",
+      "method": "Deterministic model substitute in an isolated actual CLI profile",
+      "autonomous_research": false,
+      "receipt": "receipts/host/receipt.json"
+    },
+    "real_vision": {
+      "status": "passed",
+      "autonomous_research": false,
+      "observations": [
+        {
+          "item": "A",
+          "value": 15
+        },
+        {
+          "item": "B",
+          "value": 25
+        }
+      ],
+      "receipt": "receipts/vision/receipt.json"
+    },
+    "real_autonomous_research": {
+      "status": "incomplete",
+      "model": "Qwen2.5-VL-3B-Instruct",
+      "actual_tool_calls": 0,
+      "reason": "The model emitted plans and proposed tool calls as prose without executing tools; neither experiment met autonomous research or follow-up workspace reuse acceptance.",
+      "receipts": [
+        "receipts/research/receipt.json",
+        "receipts/research-adapted/receipt.json"
+      ]
+    },
+    "live_weknora": {
+      "status": "blocked",
+      "missing_environment_variables": [
+        "DSH_VANE_TEST_WEKNORA_URL",
+        "DSH_VANE_TEST_WEKNORA_KEY",
+        "DSH_VANE_TEST_WEKNORA_KB",
+        "DSH_VANE_TEST_WEKNORA_KNOWLEDGE"
+      ],
+      "receipt": "receipts/weknora/receipt.json"
+    }
+  },
+  "limits": [
+    "Live PostgreSQL was skipped because DSH_VANE_TEST_PG_DSN is not configured.",
+    "Autonomous research has not passed; deterministic tool tests and real visual extraction are recorded separately.",
+    "WeKnora input supports indexed body chunks and authorized shared artifacts. An original-file download adapter is not implemented; load authorized original files through the file source.",
+    "This trusted local Python/UDF runtime is not an OS security sandbox."
+  ]
+}

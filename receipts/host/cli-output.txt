@@ -1,0 +1,2 @@
+Host contract verified: the Vane SQL result is 42.
+

@@ -1,0 +1,23 @@
+{
+  "name": "dsh-vane",
+  "version": "0.1.0",
+  "description": "Persistent task-scoped Vane analysis runtime for DeepSeek Harness",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" }, "./package.json": "./package.json" },
+  "files": ["dist", "cordis.patch.yml", "prompts", "skills", "python/**/*.py", "packages/**/package.yaml", "packages/**/digest.sha256", "packages/**/*.py", "packages/**/*.sql", "packages/**/*.json", "packages/**/*.md", "packages/**/*.lock", "contracts", "configs", "scripts", "examples", "pyproject.toml", "uv.lock", "README.md"],
+  "engines": { "node": ">=22" },
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-timeout=60000 tests/*.test.mjs",
+    "test:host": "node scripts/verify-host.mjs",
+    "test:research": "node scripts/research.mjs",
+    "test:interop": "uv run python scripts/interop.py",
+    "prepack": "npm run build"
+  },
+  "dependencies": { "ajv": "8.17.1" },
+  "devDependencies": { "@deepseek-ai/dsh": "0.1.2-rc.1", "@types/node": "^22.13.0", "typescript": "^5.7.3" }
+}

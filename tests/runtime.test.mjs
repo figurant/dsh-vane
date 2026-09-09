@@ -1,0 +1,110 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { writeFile, symlink, readdir, readFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { harness } from './helpers.mjs';
+
+test('real Vane persists SQL and task UDFs across calls; sessions/new tasks stay isolated', async t => {
+  const h = await harness(); t.after(() => h.manager.dispose());
+  const first = await h.success('vane_open',{});
+  const w = first.workspace_id;
+  assert.equal(first.data.vane_version,'0.1.0');
+  assert.equal((await h.call('vane_open')).workspace_id,w);
+  await h.success('vane_execute',{workspace_id:w,mode:'sql',sql:'CREATE TABLE numbers AS SELECT 41::BIGINT n'});
+  await h.success('vane_execute',{workspace_id:w,mode:'python',code:"def increment(n):\n    print('UDF log: this is not an IPC frame')\n    return n + 1\nctx.register_udf('increment', increment, ['BIGINT'], 'BIGINT')"});
+  const query = await h.success('vane_execute',{workspace_id:w,mode:'sql',sql:'SELECT increment(n) answer FROM numbers'});
+  assert.equal(query.data.tables[0].preview[0].answer,42);
+  const alien = await h.call('vane_describe',{workspace_id:w,target:'workspace'},'session-b');
+  assert.equal(alien.error.code,'WORKSPACE_NOT_FOUND');
+  const other = await h.success('vane_open',{},'session-b');
+  const missing = await h.finish(await h.call('vane_execute',{workspace_id:other.workspace_id,mode:'sql',sql:'SELECT * FROM numbers'},'session-b'),'session-b');
+  assert.equal(missing.ok,false);
+  const fresh = await h.success('vane_open',{new_task:true});
+  assert.notEqual(fresh.workspace_id,w);
+  assert.equal((await h.finish(await h.call('vane_execute',{workspace_id:fresh.workspace_id,mode:'sql',sql:'SELECT * FROM numbers'}))).ok,false);
+  const cp = await h.success('vane_control',{workspace_id:w,action:'checkpoint',tables:['main.numbers']});
+  const restored = await h.success('vane_control',{workspace_id:w,action:'restore',checkpoint_id:cp.data.checkpoint_id});
+  assert.notEqual(restored.workspace_id,w);
+  const restoredQuery = await h.success('vane_execute',{workspace_id:restored.workspace_id,mode:'sql',sql:'SELECT increment(n) answer FROM numbers'});
+  assert.equal(restoredQuery.data.tables[0].preview[0].answer,42);
+});
+
+test('file loader, pipeline versions, evidence, artifact SHA and bounded pagination', async t => {
+  const h = await harness(); t.after(() => h.manager.dispose());
+  const w = (await h.success('vane_open',{})).workspace_id;
+  const loaded = await h.success('vane_load',{workspace_id:w,source:{kind:'file',path:'input.csv'},table_name:'original'});
+  assert.equal(loaded.data.tables[0].row_count,2);
+  const args = {workspace_id:w,mode:'pipeline',package_id:'document_observations',pipeline:'ingest',asset_ids:[loaded.data.assets[0].asset_id]};
+  const run = await h.success('vane_execute',args);
+  const facts = run.data.tables.find(t => t.name.endsWith('.facts'));
+  assert.equal(facts.preview.reduce((sum,r) => sum+r.value,0),30);
+  const evidence = run.data.tables.find(t => t.name.endsWith('.evidence'));
+  assert.deepEqual(evidence.preview.map(r => JSON.parse(r.locator_json).row),[2,3]);
+  const manifest = JSON.parse(await readFile(run.data.artifacts[0].manifest,'utf8'));
+  assert.equal(manifest.schema_version,'vane-artifact/v1');
+  const repeated = await h.success('vane_execute',args);
+  assert.equal(repeated.data.artifacts[0].artifact_id,run.data.artifacts[0].artifact_id);
+  const changed = await h.success('vane_execute',{...args,params:{multiplier:2}});
+  assert.notEqual(changed.data.artifacts[0].artifact_id,run.data.artifacts[0].artifact_id);
+  assert.equal(changed.data.tables.find(t => t.name.endsWith('.facts')).preview.reduce((s,r) => s+r.value,0),60);
+  const original = await h.success('vane_execute',{workspace_id:w,mode:'sql',sql:'SELECT sum(value) total FROM original'});
+  assert.equal(original.data.tables[0].preview[0].total,30);
+  const page = await h.success('vane_read',{workspace_id:w,result_id:facts.result_id,limit:1});
+  assert.equal(page.data.rows.length,1); assert.equal(page.data.next_offset,1);
+  const link = join(h.root,'outside.csv'); await symlink('/etc/passwd',link);
+  assert.equal((await h.finish(await h.call('vane_load',{workspace_id:w,source:{kind:'file',path:link}}))).error.code,'PERMISSION_DENIED');
+});
+
+test('schema validation, trusted context, output limits and errors are explicit', async t => {
+  const h = await harness({enabledPackages:[]}); t.after(() => h.manager.dispose());
+  assert.equal((await h.tools.get('vane_open').execute({}, {signal:new AbortController().signal})).error.code,'HOST_CONTEXT_UNAVAILABLE');
+  assert.equal((await h.call('vane_open',{session_id:'spoof'})).error.code,'INVALID_ARGUMENT');
+  const w = (await h.success('vane_open',{})).workspace_id;
+  assert.equal((await h.call('vane_execute',{workspace_id:w,mode:'sql',sql:'SELECT 1',code:'bad'})).error.code,'INVALID_ARGUMENT');
+  assert.equal((await h.call('vane_control',{workspace_id:w,action:'checkpoint'})).error.code,'INVALID_ARGUMENT');
+  const bad = await h.finish(await h.call('vane_execute',{workspace_id:w,mode:'sql',sql:'SELECT nonexistent'}));
+  assert.equal(bad.error.code,'SQL_ERROR');
+  const big = await h.success('vane_execute',{workspace_id:w,mode:'sql',sql:"SELECT repeat('x',80000) AS payload"});
+  assert.ok(Buffer.byteLength(JSON.stringify(big)) < 65536);
+  const resultId = big.data.tables[0].result_id;
+  const page = await h.success('vane_read',{workspace_id:w,result_id:resultId});
+  assert.equal(page.data.truncated,true); assert.equal(page.data.rows[0]._oversized_row,0);
+  const history = await h.success('vane_read',{workspace_id:w,result_id:big.data.execution_result_id ?? big.data.result_id});
+  assert.equal(history.ok,true);
+});
+
+test('queued writes, nonblocking status, cancellation, hung UDFs, crash and idle cleanup', async t => {
+  const h = await harness({enabledPackages:[],limits:{waitMs:10,cancelGraceMs:150,idleMs:200,maxWorkspaces:4}}); t.after(() => h.manager.dispose());
+  const w = (await h.success('vane_open',{})).workspace_id;
+  const a = await h.call('vane_execute',{workspace_id:w,mode:'python',code:"import time\ntime.sleep(0.15)\nctx.connection.execute('CREATE TABLE ordered AS SELECT 1 n')",wait_ms:0});
+  const b = await h.call('vane_execute',{workspace_id:w,mode:'sql',sql:'SELECT * FROM ordered',wait_ms:0});
+  assert.equal(b.status,'queued');
+  assert.equal((await h.finish(a)).ok,true);
+  assert.equal((await h.finish(b)).data.tables[0].preview[0].n,1);
+  const stuck = await h.call('vane_execute',{workspace_id:w,mode:'python',code:'import time\ntime.sleep(60)',wait_ms:0});
+  await new Promise(r => setTimeout(r,30));
+  const start = Date.now();
+  const status = await h.call('vane_control',{workspace_id:w,action:'status',operation_id:stuck.operation_id});
+  assert.ok(Date.now()-start<100); assert.equal(status.status,'running');
+  const cancelled = await h.call('vane_control',{workspace_id:w,action:'cancel',operation_id:stuck.operation_id});
+  assert.equal(cancelled.status,'cancelled');
+  assert.equal((await h.call('vane_control',{workspace_id:w,action:'status',operation_id:stuck.operation_id})).status,'cancelled');
+  assert.equal((await h.call('vane_describe',{workspace_id:w,target:'workspace'})).error.code,'PROCESS_LOST');
+  const fresh = (await h.success('vane_open',{})).workspace_id;
+  const crash = await h.finish(await h.call('vane_execute',{workspace_id:fresh,mode:'python',code:'import os\nos._exit(7)'}));
+  assert.equal(crash.error.code,'PROCESS_LOST');
+  const idle = (await h.success('vane_open',{})).workspace_id;
+  await h.manager.reap(Date.now()+1000);
+  assert.equal((await h.call('vane_describe',{workspace_id:idle,target:'workspace'})).error.code,'WORKSPACE_CLOSED');
+});
+
+test('AbortSignal cancels owned work and no late success is reported', async t => {
+  const h = await harness({enabledPackages:[],limits:{cancelGraceMs:100}}); t.after(() => h.manager.dispose());
+  const w = (await h.success('vane_open',{})).workspace_id;
+  const controller = new AbortController();
+  const promise = h.call('vane_execute',{workspace_id:w,mode:'python',code:'import time\ntime.sleep(3)',wait_ms:2000},'session-a',controller.signal);
+  setTimeout(() => controller.abort(),30);
+  const result = await promise;
+  assert.equal(result.status,'cancelled');
+  assert.equal((await h.call('vane_control',{workspace_id:w,action:'status',operation_id:result.operation_id})).status,'cancelled');
+});

@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "artifact_id": "285330e2-8a53-41ba-ad0f-c2435ec7db50",
+  "input_sha256": "0b20d847c0033e537f5f7ab94319beeef1ce6248929253316acf24142b3b2516",
+  "facts_rows": 2,
+  "value_sum": 30,
+  "evidence_rows": [
+    2,
+    3
+  ],
+  "reader": "independent JSON Schema + hashlib + PyArrow",
+  "package_digest": "65a873803fc5fb3c5b74e1b6a38f2df1727e5b8bb2c744e1861a49b8e815bb94",
+  "artifact_path": "285330e2-8a53-41ba-ad0f-c2435ec7db50"
+}
